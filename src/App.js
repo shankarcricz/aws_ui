@@ -15,7 +15,7 @@ const App = () => {
   const [spinner, setSpinner] = useState(false)
 
   const fetchBuckets = () => {
-    axios.get('http://localhost:3000/Object/fetchBuckets').then((data) => {
+    axios.get('http://localhost:3001/Object/fetchBuckets').then((data) => {
       setData(data.data);
     }).finally(() => setSpinner(false));
     setSpinner(true);
@@ -26,7 +26,7 @@ const App = () => {
   }, [])
 
   const handleCreate = () => {
-    axios.post('http://localhost:3000/Object/create').then((data) => {
+    axios.post('http://localhost:3001/Object/create').then((data) => {
       setCreate(data);
     }).finally(() => {
       fetchBuckets();
@@ -36,7 +36,7 @@ const App = () => {
   }
   const handleFetchBucket = (name) => {
     axios.defaults.headers.common['Content-Type'] = 'application/json';
-    axios.post('http://localhost:3000/Object/fetch', { b_id: name }).then((res) => {
+    axios.post('http://localhost:3001/Object/fetch', { b_id: name }).then((res) => {
       setCurrObject(res?.data?.objects);
 
     }).finally(() => setSpinner(false));
