@@ -2,27 +2,41 @@ import React from "react";
 import axios from "axios";
 import { useRef } from "react";
 
-const Currentbucket = ({data,  currBucket, currObjects, setFlag, handleFetchBucket, fetchBuckets, setCurrObject }) => {
+const Currentbucket = ({data,  currBucket, currObjects, setFlag, handleFetchBucket, fetchBuckets, setCurrObject ,setSpinner}) => {
     const picRef = useRef();
     const handleDeleteObject = (item) => {
         console.log(item)
-        axios.post('http://localhost:3000/putObject/delete', { obj_id: item?._id, bucketId: item?.bucketId }).then((res) => console.log(res)).finally(() => handleFetchBucket(currBucket));
+        axios.post('http://localhost:3000/Object/delete', { obj_id: item?._id, bucketId: item?.bucketId }).then((res) => {
+            console.log(res);
+            setSpinner(false);
+        }).finally(() => handleFetchBucket(currBucket));
+        setSpinner(true);
     }
     console.log(data)
     const handleFileUpload = (e) => {
-        if (e.target?.files[0]?.type?.startsWith('image')) {
+        if (e.target?.files[0]?.type) {
             const formData = new FormData()
             formData.set('photo', e.target.files[0])
             formData.set('bucket', currBucket);
             axios.defaults.headers.common['Content-Type'] = 'multipart/form-data'
-            axios.post('http://localhost:3000/putObject', formData).then(res => console.log(res)).finally(() =>  handleFetchBucket(currBucket));
-           
+            axios.post('http://localhost:3000/Object', formData).then(res => {
+                console.log(res);
+            }).finally(() =>  {handleFetchBucket(currBucket);
+                setSpinner(false);});
+            setSpinner(true);
+        } else {
+            alert('sorry something went wrong!');
         }
     }
 
     const handleDeleteBucket = (currBucket) => {
-        axios.post('http://localhost:3000/putObject/deleteBucket', {bucketId : currBucket}).then(res => console.log(res)).finally(() => fetchBuckets()).finally(() =>  handleFetchBucket(currBucket));
+        axios.post('http://localhost:3000/Object/deleteBucket', {bucketId : currBucket}).then(res => console.log(res)).finally(() => fetchBuckets()).finally(() => {
+            handleFetchBucket(currBucket);
+            setSpinner(false);
+        });
+        setSpinner(true);
     }
+
     return (
         <>  
             { data?.buckets?.length > 0 && (<div className="row">
@@ -37,15 +51,17 @@ const Currentbucket = ({data,  currBucket, currObjects, setFlag, handleFetchBuck
                 </svg> Delete {currBucket}</button>
             </div>)}
 
-
             <div className='row'>
                 {
                     currObjects?.map((item, index) => {
                         return (
                             <div className='col-3'>
                                 <h5>{index + 1} - </h5>
-                                <img src={`http://localhost:3000/public/images/${item?.photo}`} alt='photo' height={100} width={100} />
-                                <button className='delete' onClick={() => handleDeleteObject(item)}>Delete {item?.name}</button>
+                                {
+                                    item?.photo.endsWith('pdf') ? <a href={`http://localhost:3000/public/images/${item?.photo}`} target="_blank">View File</a> : <img src={`http://localhost:3000/public/images/${item?.photo}`} alt='photo' height={100} width={100} />
+                                }
+                                
+                                <button className='delete btn btn-danger' onClick={() => handleDeleteObject(item)}>Delete {item?.name}</button>
                             </div>
 
                         )
