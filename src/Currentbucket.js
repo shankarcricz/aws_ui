@@ -6,7 +6,7 @@ const Currentbucket = ({data,  currBucket, currObjects, setFlag, handleFetchBuck
     const picRef = useRef();
     const handleDeleteObject = (item) => {
         console.log(item)
-        axios.post('http://localhost:3001/Object/delete', { obj_id: item?._id, bucketId: item?.bucketId }).then((res) => {
+        axios.post('https://aws-s3-sample-1.onrender.com/Object/delete', { obj_id: item?._id, bucketId: item?.bucketId }).then((res) => {
             console.log(res);
             setSpinner(false);
         }).finally(() => handleFetchBucket(currBucket));
@@ -19,7 +19,7 @@ const Currentbucket = ({data,  currBucket, currObjects, setFlag, handleFetchBuck
             formData.set('photo', e.target.files[0])
             formData.set('bucket', currBucket);
             axios.defaults.headers.common['Content-Type'] = 'multipart/form-data'
-            axios.post('http://localhost:3001/Object', formData).then(res => {
+            axios.post('https://aws-s3-sample-1.onrender.com/Object', formData).then(res => {
                 console.log(res);
             }).finally(() =>  {handleFetchBucket(currBucket);
                 setSpinner(false);});
@@ -30,7 +30,7 @@ const Currentbucket = ({data,  currBucket, currObjects, setFlag, handleFetchBuck
     }
 
     const handleDeleteBucket = (currBucket) => {
-        axios.post('http://localhost:3001/Object/deleteBucket', {bucketId : currBucket}).then(res => console.log(res)).finally(() => fetchBuckets()).finally(() => {
+        axios.post('https://aws-s3-sample-1.onrender.com/Object/deleteBucket', {bucketId : currBucket}).then(res => console.log(res)).finally(() => fetchBuckets()).finally(() => {
             handleFetchBucket(currBucket);
             setSpinner(false);
         });
@@ -58,7 +58,7 @@ const Currentbucket = ({data,  currBucket, currObjects, setFlag, handleFetchBuck
                             <div className='col-3'>
                                 <h5>{index + 1} - </h5>
                                 {
-                                    item?.photo.endsWith('pdf') ? <a href={`http://localhost:3001/public/images/${item?.photo}`} target="_blank">View File</a> : <img src={`http://localhost:3001/public/images/${item?.photo}`} alt='photo' height={100} width={100} />
+                                    item?.photo.endsWith('pdf') ? <a href={`https://aws-s3-sample-1.onrender.com/public/images/${item?.photo}`} target="_blank">View File</a> : <img src={`https://aws-s3-sample-1.onrender.com/public/images/${item?.photo}`} alt='photo' height={100} width={100} />
                                 }
                                 
                                 <button className='delete btn btn-danger' onClick={() => handleDeleteObject(item)}>Delete {item?.name}</button>
